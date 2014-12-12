@@ -1,0 +1,20 @@
+{
+	"index":{
+		"Welcome to %s": "%sへようこそ",
+		"Docs": "ドックス",
+		"Project status:": "プロジェクトステイタス：",
+		"Buggy": "バギー",
+		"Month":"月",
+		"Day": "日",
+		"Year":"年",
+		"Last Month": "先月",
+		"This Month": "今月",
+		"Next Month": "来月",
+		"Yesterday": "昨日",
+		"Today":"今日",
+		"Tomorrow":"明日",
+		"Last Year":"去年",
+		"This Year":"今年",
+		"Next Year":"来年"
+	}
+}

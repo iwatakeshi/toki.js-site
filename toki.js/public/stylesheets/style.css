@@ -1,0 +1,32 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.toki.day.now {
+	color: red;
+}
+
+.toki.weekday.now {
+	color: limegreen;
+}
+
+.toki.day.now{
+	color: limegreen;
+}
+
+.toki.year.now{
+	color: darkblue;
+}
+
+.toki.month.now{
+	color:purple;
+}
+
+.toki.week.now{
+	background-color: lightgrey;
+}

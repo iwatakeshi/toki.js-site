@@ -1,0 +1,165 @@
+extends layout
+
+block content
+  h1= title
+  p=__("Welcome to %s", title)
+  hr
+  p <b>#{__("Project status:")}</b> #{__("Buggy")}
+  a(href='https://www.github.com/iwatakeshi/toki.js') #{__("Docs")}
+  hr
+  table
+    thead
+      tr
+        td
+    tbody
+      tr
+        td
+          select.form-control#month-picker(name='month', onchange='', size='1')
+        td
+          select.form-control#day-picker(name='day', onchange='', size='1')
+        td
+          select.form-control#year-picker(name='year', onchange='', size='1')
+  hr
+  #toki
+  #controls
+    table.table
+      thead
+        tr
+          td.label Month
+          td.label Day
+          td.label Year
+      tbody
+        tr
+          td
+            h4 #{__("Month")}
+            br
+            .btn-group.btn-group-sm(role="group")
+              button(type="button").btn.btn-default#last-month #{__("Last Month")}
+              button(type="button").btn.btn-default#this-month #{__("This Month")}
+              button(type="button").btn.btn-default#next-month #{__("Next Month")}
+          td
+            h4 #{__("Day")}
+            br
+            .btn-group.btn-group-sm(role="group")
+              span.label.label-default
+              button(type="button").btn.btn-default#yesterday #{__("Yesterday")}
+              button(type="button").btn.btn-default#today #{__("Today")}
+              button(type="button").btn.btn-default#tomorrow #{__("Tomorrow")}
+          td
+            h4 #{__("Year")}
+            br
+            .btn-group.btn-group-sm(role="group")
+              span.label.label-default
+              button(type="button").btn.btn-default#last-year #{__("Last Year")}
+              button(type="button").btn.btn-default#this-year #{__("This Year")}
+              button(type="button").btn.btn-default#next-year #{__("Next Year")}
+
+  script(src='/jquery/dist/jquery.min.js')
+  script(src='javascripts/toki.js', type='text/javascript')
+  script.
+    $(document).ready(function(){
+        var t = toki({bootstrap: true, fullHeading:true, debug:true, hover:true});
+        t.Locale("#{__.getLocale().toLowerCase()}");
+
+        function tick() {
+            if (t.Month() !== new Date().getMonth()) {
+                t.Month(new Date().getMonth());
+            }
+            if (t.Day() !== new Date().getDate()) {
+                t.Day(new Date().getDate());
+            }
+            if (t.Year() !== new Date().getFullYear()) {
+                t.Year(new Date().getFullYear());
+            }
+            setTimeout(tick, 500000);
+        };
+        tick();
+        
+        for(var i = 0; i < 12; i++){
+          $('#month-picker').append($("<option />").val(i + 1).html(t.MonthName(i)));
+        }
+
+        //fill day
+        for(var i = 1; i < toki.daysInMonth(new Date().getMonth(),new Date().getFullYear()); i++){
+          $('#day-picker').append($('<option />').val(i).html(t.DayName(i)));
+        }
+
+        //fill year
+        for(var i = 1900; i < new Date().getFullYear() + 100; i++){
+          $('#year-picker').append($('<option />').val(i).html(t.YearName(i)));
+        }
+
+        
+        var months = {
+          January: "January",
+          February: "February"
+        };
+
+        $('#month-picker').val(new Date().getMonth());
+        $('#day-picker').val(new Date().getDate());
+        $('#year-picker').val(new Date().getFullYear());
+
+        $('#month-picker').change(function(){
+            t.Month($(this).val() - 1);
+        });
+
+        $('#day-picker').change(function(){
+            t.Day($(this).val());
+        });
+
+        $('#year-picker').change(function(){
+            t.Year($(this).val());          
+        });
+
+        $("#last-month").click(function(){
+            if(t.Month() > 0){
+              t.Month(t.Month() - 1);
+            }
+        });
+        
+        $("#this-month").click(function(){
+            t.Month(new Date().getMonth());
+          });
+
+        $("#next-month").click(function(){
+            if(t.Month() < 11){
+              t.Month(t.Month() + 1);
+            }
+        });
+
+        $("#yesterday").click(function(){
+            if(t.Day() > 0 && t.Day() < toki.daysInMonth()){
+              t.Day(t.Day() - 1);
+            }
+        });
+
+        $("#today").click(function(){
+            t.Day(new Date().getDate());
+        });
+
+        $("#tomorrow").click(function(){
+            if(t.Day() > 0 && t.Day() < toki.daysInMonth()){
+              t.Day(t.Day() + 1);
+            }
+        });
+
+        $("#last-year").click(function(){
+            if(t.Year() > 1990 && t.Year() < new Date().getFullYear() + 100){
+                t.Year(t.Year() - 1);
+            }
+        });
+
+        $("#this-year").click(function(){
+            t.Year(new Date().getFullYear());
+        });
+
+        $("#next-year").click(function(){
+            if(t.Year() > 1990 && t.Year() < new Date().getFullYear() + 100){
+                t.Year(t.Year() + 1);
+            }
+        });
+
+
+
+    });
+      
