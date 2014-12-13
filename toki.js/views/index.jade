@@ -60,7 +60,7 @@ block content
     $(document).ready(function(){
         var t = toki({bootstrap: true, fullHeading:true, debug:true, hover:true});
         t.Locale("#{__.getLocale().toLowerCase()}");
-
+        //t.Date(11-1, 12, 2014)
         function tick() {
             if (t.Month() !== new Date().getMonth()) {
                 t.Month(new Date().getMonth());
@@ -73,7 +73,7 @@ block content
             }
             setTimeout(tick, 500000);
         };
-        tick();
+        //tick();
         
         for(var i = 0; i < 12; i++){
           $('#month-picker').append($("<option />").val(i + 1).html(t.MonthName(i)));
@@ -128,7 +128,7 @@ block content
         });
 
         $("#yesterday").click(function(){
-            if(t.Day() > 0 && t.Day() < toki.daysInMonth()){
+            if(t.Day() > 0 && t.Day() <=toki.daysInMonth()){
               t.Day(t.Day() - 1);
             }
         });
@@ -158,8 +158,6 @@ block content
                 t.Year(t.Year() + 1);
             }
         });
-
-
 
     });
       
