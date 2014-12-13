@@ -89,18 +89,31 @@ block content
           $('#year-picker').append($('<option />').val(i).html(t.YearName(i)));
         }
 
+        function updateDays(){
+            $("#day-picker option").each(function() {
+                $(this).remove();
+            });
+            //fill day
+            for(var i = 1; i < toki.daysInMonth(); i++){
+                $('#day-picker').append($('<option />').val(i).html(t.DayName(i)));
+            }
+        }
         
         var months = {
           January: "January",
           February: "February"
         };
 
-        $('#month-picker').val(new Date().getMonth());
+        $('#month-picker').val(new Date().getMonth() + 1);
         $('#day-picker').val(new Date().getDate());
         $('#year-picker').val(new Date().getFullYear());
 
         $('#month-picker').change(function(){
             t.Month($(this).val() - 1);
+            updateDays();
+            if(t.Month() === new Date().getMonth()){
+                $('#day-picker').val(new Date().getDate());
+            }
         });
 
         $('#day-picker').change(function(){
@@ -108,54 +121,81 @@ block content
         });
 
         $('#year-picker').change(function(){
-            t.Year($(this).val());          
+            t.Year($(this).val());
+            updateDays();
+            if((t.Month() == new Date().getMonth()) && t.Year() == new Date().getFullYear()){
+              $('#day-picker').val(new Date().getDate());
+            }          
         });
 
         $("#last-month").click(function(){
             if(t.Month() > 0){
               t.Month(t.Month() - 1);
+              $('#month-picker').val(t.Month()+ 1);
+              updateDays();
             }
         });
         
         $("#this-month").click(function(){
             t.Month(new Date().getMonth());
+            $('#month-picker').val(t.Month()+ 1);
+            updateDays();
+            $('#day-picker').val(new Date().getDate());
           });
 
         $("#next-month").click(function(){
             if(t.Month() < 11){
               t.Month(t.Month() + 1);
+              $('#month-picker').val(t.Month()+ 1);
+              updateDays();
+              if(t.Month() === new Date().getMonth()){
+                $('#day-picker').val(new Date().getDate());
+              }
             }
         });
 
         $("#yesterday").click(function(){
             if(t.Day() > 0 && t.Day() <=toki.daysInMonth()){
               t.Day(t.Day() - 1);
+              $('#day-picker').val(t.Day());
             }
         });
 
         $("#today").click(function(){
             t.Day(new Date().getDate());
+            $('#day-picker').val(t.Day());
         });
 
         $("#tomorrow").click(function(){
             if(t.Day() > 0 && t.Day() < toki.daysInMonth()){
               t.Day(t.Day() + 1);
+              $('#day-picker').val(t.Day());
             }
         });
 
         $("#last-year").click(function(){
             if(t.Year() > 1990 && t.Year() < new Date().getFullYear() + 100){
                 t.Year(t.Year() - 1);
+                $('#year-picker').val(t.Year());
+                updateDays();
             }
         });
 
         $("#this-year").click(function(){
-            t.Year(new Date().getFullYear());
+            t.Year(new Date().getFullYear())
+            $('#year-picker').val(t.Year());
+              updateDays();
+            if(t.Month() === new Date().getMonth()){
+              $('#day-picker').val(new Date().getDate());
+            }
         });
 
         $("#next-year").click(function(){
             if(t.Year() > 1990 && t.Year() < new Date().getFullYear() + 100){
                 t.Year(t.Year() + 1);
+                $('#year-picker').val(t.Year());
+                updateDays();
+
             }
         });
 
