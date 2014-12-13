@@ -60,22 +60,6 @@ block content
     $(document).ready(function(){
         var t = toki({bootstrap: true, fullHeading:true, debug:true, hover:true});
         t.Locale("#{__.getLocale().toLowerCase()}");
-        //t.Date(11-1, 12, 2014)
-        function tick() {
-            if (t.Month() !== new Date().getMonth()) {
-                t.Month(new Date().getMonth());
-            }
-            if (t.Day() !== new Date().getDate()) {
-                t.Day(new Date().getDate());
-            }
-            if (t.Year() !== new Date().getFullYear()) {
-                t.Year(new Date().getFullYear());
-            }
-            //update every hour
-            setTimeout(tick, 3600000);
-        };
-        
-        tick();
         
         for(var i = 0; i < 12; i++){
           $('#month-picker').append($("<option />").val(i + 1).html(t.MonthName(i)));
@@ -201,5 +185,26 @@ block content
             }
         });
 
+        //t.Date(11-1, 12, 2014)
+        function tick() {
+            if (t.Month() !== new Date().getMonth()) {
+                t.Month(new Date().getMonth());
+            }
+            if (t.Day() !== new Date().getDate()) {
+                t.Day(new Date().getDate());
+            }
+            if (t.Year() !== new Date().getFullYear()) {
+                t.Year(new Date().getFullYear());
+            }
+
+            $('#month-picker').val(new Date().getMonth() + 1);
+            $('#day-picker').val(new Date().getDate());
+            $('#year-picker').val(new Date().getFullYear());
+            //update every hour
+            setTimeout(tick, 3600000);
+        };
+        
+        tick();
+        
     });
       
