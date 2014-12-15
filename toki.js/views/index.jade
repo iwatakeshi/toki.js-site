@@ -13,12 +13,20 @@ block content
         td
     tbody
       tr
+        p Date
         td
           select.form-control#month-picker(name='month', onchange='', size='1')
+          br
         td
           select.form-control#day-picker(name='day', onchange='', size='1')
+          br
         td
           select.form-control#year-picker(name='year', onchange='', size='1')
+          br
+      tr
+        td
+          p #{__('First day of week')}
+          select.form-control#weekday-picker(name='weekday', onchange='', size='1')
   hr
   #toki
   #controls
@@ -58,21 +66,46 @@ block content
   script(src='javascripts/toki.js', type='text/javascript')
   script.
     $(document).ready(function(){
-        var t = toki({bootstrap: true, fullHeading:true, debug:true, hover:true});
+        var t = toki({
+          bootstrap: true, 
+          fullHeading:true, 
+          debug:true,
+          start: 0
+        });
         t.Locale("#{__.getLocale().toLowerCase()}");
-        
-        for(var i = 0; i < 12; i++){
-          $('#month-picker').append($("<option />").val(i + 1).html(t.MonthName(i)));
-        }
+    
+        var now = new Date();
+        var date = {
+            month: now.getMonth(),
+            day: now.getDate(),
+            year: now.getFullYear(),
+            weekday: now.getDay()
+        };
 
-        //fill day
-        for(var i = 1; i < toki.daysInMonth(new Date().getMonth(),new Date().getFullYear()); i++){
-          $('#day-picker').append($('<option />').val(i).html(t.DayName(i)));
-        }
+        function init(){
+            for(var i = 0; i < t.MonthNames().length; i++){
+                $('#month-picker').append($("<option />").val(i + 1).html(t.MonthName(i)));
+              }
 
-        //fill year
-        for(var i = 1900; i < new Date().getFullYear() + 100; i++){
-          $('#year-picker').append($('<option />').val(i).html(t.YearName(i)));
+            //fill day
+            for(var i = 1; i < toki.daysInMonth(date.month, date.year); i++){
+                $('#day-picker').append($('<option />').val(i).html(t.DayName(i)));
+            }
+
+            //fill year
+            for(var i = 1900; i < date.year + 100; i++){
+                $('#year-picker').append($('<option />').val(i).html(t.YearName(i)));
+            }
+
+            //fill weekday
+            for(var i = 0; i < t.WeekdayNames().length; i++){
+                $('#weekday-picker').append($('<option />').val(i).html(t.WeekdayName(i)))
+            }
+
+            $('#month-picker').val(date.month + 1);
+            $('#day-picker').val(date.day);
+            $('#year-picker').val(date.year);
+            $('#weekday-picker').val(date.weekday);
         }
 
         function updateDays(){
@@ -84,21 +117,19 @@ block content
                 $('#day-picker').append($('<option />').val(i).html(t.DayName(i)));
             }
         }
-        
-        var months = {
-          January: "January",
-          February: "February"
-        };
 
-        $('#month-picker').val(new Date().getMonth() + 1);
-        $('#day-picker').val(new Date().getDate());
-        $('#year-picker').val(new Date().getFullYear());
+        //fill up the pickers
+        init();
+
+        $('#weekday-picker').change(function(){
+            t.firstDayOfWeek($(this).val());
+        })
 
         $('#month-picker').change(function(){
             t.Month($(this).val() - 1);
             updateDays();
-            if(t.Month() === new Date().getMonth()){
-                $('#day-picker').val(new Date().getDate());
+            if(t.Month() === date.month){
+                $('#day-picker').val(date.day);
             }
         });
 
@@ -109,33 +140,33 @@ block content
         $('#year-picker').change(function(){
             t.Year($(this).val());
             updateDays();
-            if((t.Month() == new Date().getMonth()) && t.Year() == new Date().getFullYear()){
-              $('#day-picker').val(new Date().getDate());
+            if((t.Month() == date.month) && t.Year() == date.year){
+              $('#day-picker').val(date.day);
             }          
         });
 
         $("#last-month").click(function(){
             if(t.Month() > 0){
               t.Month(t.Month() - 1);
-              $('#month-picker').val(t.Month()+ 1);
+              $('#month-picker').val(t.Month() + 1);
               updateDays();
             }
         });
         
         $("#this-month").click(function(){
-            t.Month(new Date().getMonth());
-            $('#month-picker').val(t.Month()+ 1);
+            t.Month(date.month);
+            $('#month-picker').val(t.Month() + 1);
             updateDays();
-            $('#day-picker').val(new Date().getDate());
+            $('#day-picker').val(date.day);
           });
 
         $("#next-month").click(function(){
-            if(t.Month() < 11){
+            if(t.Month() < t.MonthNames().length - 1){
               t.Month(t.Month() + 1);
-              $('#month-picker').val(t.Month()+ 1);
+              $('#month-picker').val(t.Month() + 1);
               updateDays();
-              if(t.Month() === new Date().getMonth()){
-                $('#day-picker').val(new Date().getDate());
+              if(t.Month() === date.month){
+                $('#day-picker').val(date.day);
               }
             }
         });
@@ -148,7 +179,7 @@ block content
         });
 
         $("#today").click(function(){
-            t.Day(new Date().getDate());
+            t.Day(date.day);
             $('#day-picker').val(t.Day());
         });
 
@@ -160,7 +191,7 @@ block content
         });
 
         $("#last-year").click(function(){
-            if(t.Year() > 1990 && t.Year() < new Date().getFullYear() + 100){
+            if(t.Year() > 1990 && t.Year() < date.year + 100){
                 t.Year(t.Year() - 1);
                 $('#year-picker').val(t.Year());
                 updateDays();
@@ -168,43 +199,22 @@ block content
         });
 
         $("#this-year").click(function(){
-            t.Year(new Date().getFullYear())
+            t.Year(date.year)
             $('#year-picker').val(t.Year());
               updateDays();
-            if(t.Month() === new Date().getMonth()){
-              $('#day-picker').val(new Date().getDate());
+            if(t.Month() === date.month){
+              $('#day-picker').val(date.day);
             }
         });
 
         $("#next-year").click(function(){
-            if(t.Year() > 1990 && t.Year() < new Date().getFullYear() + 100){
+            if(t.Year() > 1990 && t.Year() < date.year + 100){
                 t.Year(t.Year() + 1);
                 $('#year-picker').val(t.Year());
                 updateDays();
 
             }
         });
-
-        //t.Date(11-1, 12, 2014)
-        function tick() {
-            if (t.Month() !== new Date().getMonth()) {
-                t.Month(new Date().getMonth());
-            }
-            if (t.Day() !== new Date().getDate()) {
-                t.Day(new Date().getDate());
-            }
-            if (t.Year() !== new Date().getFullYear()) {
-                t.Year(new Date().getFullYear());
-            }
-
-            $('#month-picker').val(new Date().getMonth() + 1);
-            $('#day-picker').val(new Date().getDate());
-            $('#year-picker').val(new Date().getFullYear());
-            //update every hour
-            setTimeout(tick, 3600000);
-        };
-        
-        tick();
         
     });
       
