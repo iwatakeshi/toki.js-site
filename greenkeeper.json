@@ -1,0 +1,9 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "toki.js/package.json"
+      ]
+    }
+  }
+}
